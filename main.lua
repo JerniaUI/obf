@@ -34,26 +34,66 @@ function slf:deobfuscate(hex, key)
 
 	local success, err = pcall(function()
 		local env = {
-			game = game,
-			workspace = workspace,
-			Players = game:GetService("Players"),
-			RunService = game:GetService("RunService"),
-			ReplicatedStorage = game:GetService("ReplicatedStorage"),
-			HttpService = game:GetService("HttpService"),
-			HttpGet = function(url)
-				return game:GetService("HttpService"):GetAsync(url)
-			end,
-			HttpPost = function(url, data)
-				return game:GetService("HttpService"):PostAsync(url, data)
-			end,
-			print = print,
-			warn = warn,
-			tostring = tostring,
-			tonumber = tonumber,
-			math = math,
-			table = table,
-			string = string,
-			coroutine = coroutine,
+		    game = game,
+		    workspace = workspace,
+		    Players = game:GetService("Players"),
+		    ReplicatedStorage = game:GetService("ReplicatedStorage"),
+		    ServerStorage = game:GetService("ServerStorage"),
+		    StarterGui = game:GetService("StarterGui"),
+		    StarterPack = game:GetService("StarterPack"),
+		    Lighting = game:GetService("Lighting"),
+		    RunService = game:GetService("RunService"),
+		    UserInputService = game:GetService("UserInputService"),
+		    HttpService = game:GetService("HttpService"),
+		    TweenService = game:GetService("TweenService"),
+		    ContextActionService = game:GetService("ContextActionService"),
+		    CollectionService = game:GetService("CollectionService"),
+		    Debris = game:GetService("Debris"),
+		    Players = game:GetService("Players"),
+		    
+		    -- Roblox constructors
+		    Instance = Instance,
+		    CFrame = CFrame,
+		    Vector3 = Vector3,
+		    Vector2 = Vector2,
+		    Color3 = Color3,
+		    BrickColor = BrickColor,
+		    NumberRange = NumberRange,
+		    NumberSequence = NumberSequence,
+		    UDim = UDim,
+		    UDim2 = UDim2,
+		    Ray = Ray,
+		    Enum = Enum,
+		    
+		    -- Core Lua
+		    print = print,
+		    warn = warn,
+		    error = error,
+		    assert = assert,
+		    pcall = pcall,
+		    xpcall = xpcall,
+		    tonumber = tonumber,
+		    tostring = tostring,
+		    type = type,
+		    unpack = unpack or table.unpack,
+		    next = next,
+		    pairs = pairs,
+		    ipairs = ipairs,
+		    select = select,
+		    coroutine = coroutine,
+		    math = math,
+		    table = table,
+		    string = string,
+		    tick = tick,
+		    os = os,
+		    
+		    -- HTTP helpers
+		    HttpGet = function(url)
+		        return game:GetService("HttpService"):GetAsync(url)
+		    end,
+		    HttpPost = function(url, data)
+		        return game:GetService("HttpService"):PostAsync(url, data)
+		    end,
 		}
 
 		local fn = loadstring(code)
