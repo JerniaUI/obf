@@ -1,2 +1,71 @@
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v13,v14) local v15={};for v31=1, #v13 do v6(v15,v0(v4(v1(v2(v13,v31,v31 + 1 )),v1(v2(v14,1 + (v31% #v14) ,1 + (v31% #v14) + 1 )))%256 ));end return v5(v15);end local v8={};local function v9(v16) return (v16:gsub(".",function(v32) return string.format(v7("\148\147\137\29","\126\177\163\187\69\134\219\167"),string.byte(v32));end));end local function v10(v17) return (v17:gsub(v7("\109\131","\156\67\173\74\165"),function(v33) return string.char(tonumber(v33,16));end));end v8.key=function(v18,v19,v20) local v21={};for v34=1 + 0 , #v19 do local v35=1954 -(508 + 1446) ;local v36;local v37;local v38;while true do if (v35==1) then v38=nil;while true do if (v36==(1 + 0)) then v21[v34]=string.char(bit32.bxor(v37,v38));break;end if (v36==0) then local v40=0;while true do if (v40==(997 -(915 + 82))) then v37=string.byte(v19,v34);v38=string.byte(v20,(2 -1) + ((v34-(1 + 0))% #v20) );v40=1 -0 ;end if (v40==1) then v36=1188 -(1069 + 118) ;break;end end end end break;end if (v35==(0 -0)) then v36=0;v37=nil;v35=1 -0 ;end end end return v9(table.concat(v21));end;v8.deobfuscate=function(v22,v23,v24) local v25=0 + 0 ;local v26;local v27;local v28;local v29;local v30;while true do if (v25==(3 -1)) then v30=nil;while true do if (v26==(0 + 0)) then v27=v10(v23);v28={};v26=792 -(368 + 423) ;end if (v26==1) then for v41=3 -2 , #v27 do local v42=18 -(10 + 8) ;local v43;local v44;local v45;while true do if (v42==0) then v43=0 -0 ;v44=nil;v42=443 -(416 + 26) ;end if (1==v42) then v45=nil;while true do if (v43==0) then local v46=0 -0 ;while true do if (v46==0) then local v48=0 + 0 ;while true do if (v48==(1 -0)) then v46=1;break;end if (v48==(438 -(145 + 293))) then v44=string.byte(v27,v41);v45=string.byte(v24,(431 -(44 + 386)) + ((v41-(1487 -(998 + 488)))% #v24) );v48=1 + 0 ;end end end if (v46==(1 + 0)) then v43=1;break;end end end if ((773 -(201 + 571))==v43) then v28[v41]=string.char(bit32.bxor(v44,v45));break;end end break;end end end v29,v30=pcall(function() loadstring(table.concat(v28))();end);v26=1140 -(116 + 1022) ;end if (v26==(8 -6)) then if  not v29 then warn(v7("\3\165\70\24\187\102\77\49\174\9\25\174\102\67\38\165\70\4\230\102","\38\84\215\41\118\220\70"),v30);end break;end end break;end if (v25==(1 + 0)) then v28=nil;v29=nil;v25=7 -5 ;end if (v25==(0 -0)) then v26=0;v27=nil;v25=860 -(814 + 45) ;end end end;return v8;
---v1.0
+local slf = {}
+
+local function toHex(str)
+	return (str:gsub(".", function(c)
+		return string.format("%02X", string.byte(c))
+	end))
+end
+
+local function fromHex(hex)
+	return (hex:gsub("..", function(cc)
+		return string.char(tonumber(cc, 16))
+	end))
+end
+
+function slf:key(str, key)
+	local t = {}
+	for i = 1, #str do
+		local c = string.byte(str, i)
+		local k = string.byte(key, 1 + ((i-1) % #key))
+		t[i] = string.char(bit32.bxor(c, k))
+	end
+	return toHex(table.concat(t))
+end
+
+function slf:deobfuscate(hex, key)
+	local gibberish = fromHex(hex)
+	local t = {}
+	for i = 1, #gibberish do
+		local c = string.byte(gibberish, i)
+		local k = string.byte(key, 1 + ((i-1) % #key))
+		t[i] = string.char(bit32.bxor(c, k))
+	end
+	local code = table.concat(t)
+
+	local success, err = pcall(function()
+		-- Sandbox environment
+		local env = {
+			game = game,
+			workspace = workspace,
+			Players = game:GetService("Players"),
+			RunService = game:GetService("RunService"),
+			ReplicatedStorage = game:GetService("ReplicatedStorage"),
+			HttpService = game:GetService("HttpService"),
+			-- Optional HTTP shortcuts
+			HttpGet = function(url)
+				return game:GetService("HttpService"):GetAsync(url)
+			end,
+			HttpPost = function(url, data)
+				return game:GetService("HttpService"):PostAsync(url, data)
+			end,
+			print = print,
+			warn = warn,
+			tostring = tostring,
+			tonumber = tonumber,
+			math = math,
+			table = table,
+			string = string,
+			coroutine = coroutine,
+		}
+
+		local fn = loadstring(code)
+		setfenv(fn, env) -- For Lua 5.1; use _ENV for 5.2+
+		fn()
+	end)
+
+	if not success then
+		warn("Wrong key or error: ", err)
+	end
+end
+
+return slf
