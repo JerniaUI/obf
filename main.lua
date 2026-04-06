@@ -33,7 +33,6 @@ function slf:deobfuscate(hex, key)
 	local code = table.concat(t)
 
 	local success, err = pcall(function()
-		-- Sandbox environment
 		local env = {
 			game = game,
 			workspace = workspace,
@@ -41,7 +40,6 @@ function slf:deobfuscate(hex, key)
 			RunService = game:GetService("RunService"),
 			ReplicatedStorage = game:GetService("ReplicatedStorage"),
 			HttpService = game:GetService("HttpService"),
-			-- Optional HTTP shortcuts
 			HttpGet = function(url)
 				return game:GetService("HttpService"):GetAsync(url)
 			end,
@@ -59,7 +57,7 @@ function slf:deobfuscate(hex, key)
 		}
 
 		local fn = loadstring(code)
-		setfenv(fn, env) -- For Lua 5.1; use _ENV for 5.2+
+		setfenv(fn, env) 
 		fn()
 	end)
 
